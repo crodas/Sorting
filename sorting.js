@@ -147,7 +147,9 @@ var Sorting =
 	                        return e.preventDefault();
 	                    }, onDrop: function onDrop(ev) {
 	                        _this4.setState({ dragging: null });
-	                        console.error(ev);
+	                        if (_this4.props.onChange) {
+	                            _this4.props.onChange(_this4.state.children);
+	                        }
 	                    } },
 	                this.state.children
 	            );
@@ -158,6 +160,11 @@ var Sorting =
 	}(_react2.default.Component);
 
 	exports.default = Sortable;
+
+
+	Sortable.propTypes = {
+	    onChange: _react2.default.PropTypes.func
+	};
 
 /***/ },
 /* 1 */

@@ -51,9 +51,15 @@ export default class Sortable extends React.Component {
     render() {
         return <div onDragOver={e => e.preventDefault()} onDrop={ ev => {
             this.setState({ dragging: null });
-            console.error(ev) 
+            if (this.props.onChange) {
+                this.props.onChange(this.state.children);
+            }
         }}>
             {this.state.children}
         </div>;
     }
+}
+
+Sortable.propTypes = {
+    onChange: React.PropTypes.func,
 }
