@@ -1,0 +1,24 @@
+{
+  "name": "react-sorting",
+  "version": "0.0.1",
+  "description": "Simple library to do one thing, sorting elements",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crodas/Sortable.git"
+  },
+  "author": "César Rodas <cesar@rodas.me>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/crodas/Sortable/issues"
+  },
+  "homepage": "https://github.com/crodas/Sortable#readme",
+  "dependencies": {
+    "webpack-preset": "^0.2.0",
+    "webpack-preset-babel": "^0.2.0",
+    "webpack-preset-babel-stage-2": "^0.2.0"
+  }
+}
