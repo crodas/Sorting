@@ -1,0 +1,24 @@
+{
+  "name": "react-sorting",
+  "description": "Simple library to do one thing, sorting elements",
+  "main": "sorting.js",
+  "authors": [
+    "César Rodas <cesar@rodas.me>"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "sorting",
+    "drag",
+    "and",
+    "drop",
+    "react"
+  ],
+  "homepage": "https://github.com/crodas/Sorting",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
