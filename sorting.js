@@ -73,11 +73,16 @@ var Sorting =
 
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Sortable).call(this, args));
 
-	        _this.state = { children: _this.getChildren(), dragging: null };
+	        _this.state = { children: _this.getChildren(args), dragging: null };
 	        return _this;
 	    }
 
 	    _createClass(Sortable, [{
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            this.setState({ children: this.getChildren(nextProps) });
+	        }
+	    }, {
 	        key: 'handleMove',
 	        value: function handleMove(child) {
 	            var _state = this.state;
@@ -129,10 +134,13 @@ var Sorting =
 	        }
 	    }, {
 	        key: 'getChildren',
-	        value: function getChildren() {
+	        value: function getChildren(props) {
 	            var _this3 = this;
 
-	            return _react2.default.Children.toArray(this.props.children).map(function (child) {
+	            return _react2.default.Children.toArray(props.children).map(function (child) {
+	                if (child.props.draggable) {
+	                    return child;
+	                }
 	                return _this3.cloneElement(child);
 	            });
 	        }
