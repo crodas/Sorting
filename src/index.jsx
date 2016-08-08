@@ -3,7 +3,10 @@ import React from 'react';
 export default class Sortable extends React.Component {
     constructor(args) {
         super(args);
-        this.state = { children: this.getChildren(), dragging: null }
+        this.state = { children: this.getChildren(args), dragging: null }
+    }
+    componentWillReceiveProps(nextProps) {
+        this.setState({ children: this.getChildren(nextProps) });
     }
     handleMove(child) {
         let {children, dragging} = this.state;
@@ -43,8 +46,11 @@ export default class Sortable extends React.Component {
         });
         return child;
     }
-    getChildren() {
-        return React.Children.toArray(this.props.children).map(child => {
+    getChildren(props) {
+        return React.Children.toArray(props.children).map(child => {
+            if (child.props.draggable) {
+                return child;
+            }
             return this.cloneElement(child);
         });
     }
