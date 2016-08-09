@@ -65,16 +65,39 @@ var Sorting =
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Sortable = function (_React$Component) {
-	    _inherits(Sortable, _React$Component);
+	var SortableContainer = function (_React$Component) {
+	    _inherits(SortableContainer, _React$Component);
+
+	    function SortableContainer() {
+	        _classCallCheck(this, SortableContainer);
+
+	        return _possibleConstructorReturn(this, Object.getPrototypeOf(SortableContainer).apply(this, arguments));
+	    }
+
+	    _createClass(SortableContainer, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { draggable: this.props.draggable, onDragOver: this.props.onDragOver, onDragStart: this.props.onDragStart },
+	                this.props.children
+	            );
+	        }
+	    }]);
+
+	    return SortableContainer;
+	}(_react2.default.Component);
+
+	var Sortable = function (_React$Component2) {
+	    _inherits(Sortable, _React$Component2);
 
 	    function Sortable(args) {
 	        _classCallCheck(this, Sortable);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Sortable).call(this, args));
+	        var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(Sortable).call(this, args));
 
-	        _this.state = { children: _this.getChildren(args), dragging: null };
-	        return _this;
+	        _this2.state = { children: _this2.getChildren(args), dragging: null };
+	        return _this2;
 	    }
 
 	    _createClass(Sortable, [{
@@ -84,7 +107,7 @@ var Sorting =
 	        }
 	    }, {
 	        key: 'handleMove',
-	        value: function handleMove(child) {
+	        value: function handleMove(ev, child) {
 	            var _state = this.state;
 	            var children = _state.children;
 	            var dragging = _state.dragging;
@@ -116,47 +139,82 @@ var Sorting =
 	            this.setState({ children: children, dragging: dragging });
 	        }
 	    }, {
-	        key: 'cloneElement',
-	        value: function cloneElement(oldChild) {
-	            var _this2 = this;
+	        key: 'findDraggingElement',
+	        value: function findDraggingElement(children, r) {
+	            var _this3 = this;
 
-	            var key = oldChild.props.key || "$k" + Math.random();
-	            var child = _react2.default.cloneElement(oldChild, {
-	                draggable: true,
-	                onDragOver: function onDragOver(ev) {
-	                    return _this2.handleMove(child);
-	                },
-	                onDragStart: function onDragStart(ev) {
-	                    return _this2.startMoving(ev, child);
+	            return _react2.default.Children.map(children, function (child) {
+	                if (!child.props) {
+	                    return child;
 	                }
+	                if (child.props['drag-element']) {
+	                    r.hasCustomDrag = true;
+	                    return _react2.default.cloneElement(child, {
+	                        draggable: true,
+	                        onDragStart: r.onDragStart
+	                    });
+	                }
+	                if (child.props.children) {
+	                    return _react2.default.cloneElement(child, {
+	                        children: _this3.findDraggingElement(child.props.children, r)
+	                    });
+	                }
+	                return child;
 	            });
-	            return child;
 	        }
 	    }, {
 	        key: 'getChildren',
 	        value: function getChildren(props) {
-	            var _this3 = this;
+	            var _this4 = this;
 
 	            return _react2.default.Children.toArray(props.children).map(function (child) {
-	                if (child.props.draggable) {
+	                if (child instanceof SortableContainer) {
 	                    return child;
 	                }
-	                return _this3.cloneElement(child);
+
+	                var r = {
+	                    hasCustomDrag: false,
+	                    onDragStart: function onDragStart(ev) {
+	                        return _this4.startMoving(ev, wrapper);
+	                    }
+	                };
+
+	                child = _this4.findDraggingElement(child, r);
+
+	                if (r.hasCustomDrag) {
+	                    r.onDragStart = function (ev) {};
+	                }
+
+	                var wrapper = _react2.default.createElement(
+	                    SortableContainer,
+	                    {
+	                        key: Math.random(),
+	                        draggable: !r.hasCustomDrag,
+	                        onDragOver: function onDragOver(ev) {
+	                            return _this4.handleMove(ev, wrapper);
+	                        },
+	                        onDragStart: r.onDragStart
+	                    },
+	                    child
+	                );
+	                return wrapper;
 	            });
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this4 = this;
+	            var _this5 = this;
 
 	            return _react2.default.createElement(
 	                'div',
 	                { onDragOver: function onDragOver(e) {
 	                        return e.preventDefault();
 	                    }, onDrop: function onDrop(ev) {
-	                        _this4.setState({ dragging: null });
-	                        if (_this4.props.onChange) {
-	                            _this4.props.onChange(_this4.state.children);
+	                        _this5.setState({ dragging: null });
+	                        if (_this5.props.onChange) {
+	                            _this5.props.onChange(_this5.state.children.map(function (c) {
+	                                return c.props.children;
+	                            }));
 	                        }
 	                    } },
 	                this.state.children
